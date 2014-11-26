@@ -1,7 +1,7 @@
 EFHtools
 ========
 
-Ecological ForecastHhorizon tools
+Ecological Forecast Horizon tools
 
 This repository is for developing analytical tools related to ecological forecast horizons.
 
