@@ -1,9 +1,9 @@
-EFHtools
+ecopredtools
 ========
 
-Ecological Forecast Horizon tools
+Ecological predictability tools
 
-This repository is for developing analytical tools related to ecological forecast horizons.
+This repository is for developing analytical tools related to ecological predictability.
 
 It will contain, for example:
 - Code from relevant publications
