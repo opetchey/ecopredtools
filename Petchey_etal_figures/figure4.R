@@ -5,13 +5,14 @@
 
 rm(list=ls())
 library(plyr)
+library(dplyr)
 library(stringr)
 library(reshape2)
 library(ggplot2)
 library(Hmisc)
 
 ## Read in and clean the mean forecast horizons
-dd <- read.csv("~/Dropbox (Dept of Geography)/1. prediction concept/EFHtools/Petchey_etal_figures/data/PH_outputYdata.csv")
+dd <- read.csv("~/Dropbox (Dept of Geography)/1. prediction concept/ecopredtools/Petchey_etal_figures/data/PH_outputYdata.csv")
 dd <- melt(dd)
 dd <- cbind(dd, do.call("rbind", strsplit(as.character(dd$variable), "\\.")))
 names(dd) <- c("Uncertainty", "Junk", "Forecast.horizon", "Variable", "Evolution")
@@ -19,7 +20,7 @@ str(dd)
 dd$num.uncert <- rep(1:4, 6)
 
 ## Read in and clean the sd forecast horizons
-ee <- read.csv("~/Dropbox (Dept of Geography)/1. prediction concept/EFHtools/Petchey_etal_figures/data/PH_outputERRORdata.csv")
+ee <- read.csv("~/Dropbox (Dept of Geography)/1. prediction concept/ecopredtools/Petchey_etal_figures/data/PH_outputERRORdata.csv")
 ee <- melt(ee)
 ee <- cbind(ee, do.call("rbind", strsplit(as.character(ee$variable), "\\.")))
 names(ee) <- c("Uncertainty", "Junk", "Forecast.horizon", "Variable", "Evolution")
@@ -30,6 +31,9 @@ ee$num.uncert <- rep(1:4, 6)
 dd$error <- ee$Forecast.horizon
 dd$upper <- dd$Forecast.horizon + dd$error
 dd$lower <- dd$Forecast.horizon - dd$error
+
+## don't use the extinction rates
+dd <- filter(dd, Variable!="extrate")
 
 ## set dodge value for ggplot
 pd <- position_dodge(0.3)
