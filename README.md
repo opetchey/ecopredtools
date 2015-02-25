@@ -9,3 +9,5 @@ It will contain, for example:
 - Code from relevant publications
 - Code for calculating ecological forecast horizons from empirical data
 - Relevant datasets or links to them.
+
+Advice about how you can contribute are [here](contributing.md).
