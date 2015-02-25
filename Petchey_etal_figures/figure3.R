@@ -155,7 +155,7 @@ rm(list=ls())
 library(ggplot2)
 library(Hmisc)
 library(dplyr)
-load('~/Dropbox (Dept of Geography)/1. prediction concept/EFHtools/Petchey_etal_figures/data/data2.Rdata')
+load('~/Dropbox (Dept of Geography)/1. Petchey EFH/ecopredtools/Petchey_etal_figures/data/data2.Rdata')
 
 ## get average etc prediction horizons by treatments
 CI <- .10
@@ -179,10 +179,10 @@ ggplot(aa[9:32,], aes(x=log10(N0.pred.sd), y=median.pred.horizon,
   geom_point(size=3, position=pd) +
   labs(linetype="Demographic stochasticity",
        col="Uncertainty in r: sd(r)", x="Uncertainty in N0: sd(N0)", y="Prediction horizon") +
-  ylim(c(0, 40)) +
+  ylim(c(0, 35)) +
   geom_errorbar(aes(ymax=upper, ymin=lower), width=0.8, position=pd) +
-  theme_bw() + theme(legend.key = element_rect(colour = "white")) +
-  geom_point(data=aa[1:8,],size=3, aes(y=jitter(median.pred.horizon)), position=pd)
+  theme_bw() + theme(legend.key = element_rect(colour = "white")) 
+  ##geom_point(data=aa[1:8,],size=3, aes(y=jitter(median.pred.horizon)), position=pd)
 
 ## not used
 # ggplot(aa, aes(x=log10(N0.pred.sd), y=median.pred.horizon, linetype=demo.stoch)) +

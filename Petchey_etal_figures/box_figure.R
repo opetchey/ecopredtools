@@ -33,9 +33,9 @@ delta <- 1e-10 ## the accuracy of the initial conditions
 layout(matrix(1:3, 1, 3))
 
 ## Plot 1
-plot(1:its, ts1, type="l", xlab="Time", ylab="Population size")
-lines(1:its, ts2, type="l")
-mtext(3, line=1,text="(a)", adj=0, font=2)
+plot(1:its, ts1, type="l", xlab="Time", ylab="Population size", log="y")
+lines(1:its, ts2, type="l", col="blue")
+mtext(3, line=1,text="(a)", adj=0, font=2, lwd=0.1)
 
 ## Plot 2
 plot(1:its, log10(abs(ts1-ts2)), type="l", ylab="Log of absolute difference", xlab="Time")      
