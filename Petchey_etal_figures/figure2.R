@@ -134,7 +134,7 @@ rr2 <- group_by(rr1, N0.pred.sd, r.pred.sd, demo.stoch) %>%
 rr3 <- rr2[rep(rownames(rr2), each=2),]
 rr3$last.pred.skill[seq(1,length(rr3$last.pred.skill), 2)] <- -0.2
 
-save.image(file="~/Dropbox (Dept of Geography)/1. prediction concept/det_chaos/data1.Rdata")
+#save.image(file="~/Dropbox (Dept of Geography)/1. prediction concept/det_chaos/data1.Rdata")
 
 
 ## Only run from here once you have a dataset saved
@@ -153,6 +153,8 @@ g <- ggplot(data=rr1, aes(x=its, y=mean.pred.skill, col=as.factor(N0.pred.sd), l
   labs(col="sd(N0)", linetype="sd(r)", x="Time (generations)", y="Forecast proficiency") +
   facet_grid(.~nice.ds) + 
   geom_hline(yintercept=pred.skill.threshold, col="purple", linetype=2, alpha=0.5)
+
+quartz(width=8, height=4)
 g + geom_line(data=rr3, aes(x=pred.horizon,
                             y=last.pred.skill,
                             col=as.factor(N0.pred.sd),
