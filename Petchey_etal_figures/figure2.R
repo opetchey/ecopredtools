@@ -142,22 +142,26 @@ save.image(file="~/Dropbox (Dept of Geography)/1. prediction concept/det_chaos/d
 rm(list=ls())
 library(ggplot2)
 load("~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petchey_etal_figures/data/data1.Rdata")
+#load("/Users/Frank/Documents/My scientific articles/2015 - Prediction horizons/ecopredtools/Petchey_etal_figures/data/data1.Rdata")
+
 ## Plot the loss of prediction skill through time
-rr1$nice.ds <- ifelse(rr1$demo.stoch, "With demographic stochasticity", "Without demographic Stochasticity")  
-rr3$nice.ds <- ifelse(rr3$demo.stoch, "With demographic stochasticity", "Without demographic Stochasticity")  
-g <- ggplot(data=rr1, aes(x=its, y=mean.pred.skill, col=as.factor(N0.pred.sd),
-                          linetype=as.factor(r.pred.sd))) +
-  ylim(-0.2, 1) +
-  geom_line(size=0.7) +
+rr1$nice.ds <- ifelse(rr1$demo.stoch, "With demographic stochasticity", "Without demographic stochasticity")  
+rr3$nice.ds <- ifelse(rr3$demo.stoch, "With demographic stochasticity", "Without demographic stochasticity")  
+g <- ggplot(data=rr1, aes(x=its, y=mean.pred.skill, col=as.factor(N0.pred.sd), linetype=as.factor(r.pred.sd))) +
+  geom_line(size=0.7, alpha=0.7) + # transparaent colours to better see when lines lay on top of eachother
+  #geom_point(size=1.5, alpha=0.5) + # make graph less busy
   labs(col="sd(N0)", linetype="sd(r)", x="Time (generations)", y="Forecast proficiency") +
   facet_grid(.~nice.ds) + 
   geom_hline(yintercept=pred.skill.threshold, col="purple", linetype=2, alpha=0.5)
 g + geom_line(data=rr3, aes(x=pred.horizon,
                             y=last.pred.skill,
                             col=as.factor(N0.pred.sd),
-                            linetype=as.factor(r.pred.sd)), size=0.7) +
-  theme_bw() + theme(legend.key = element_rect(colour = "white"))
-
+                            linetype=as.factor(r.pred.sd)),
+              position="jitter",
+              alpha=0.7) + # jitter lines
+  theme_bw() + theme(legend.key = element_rect(colour = "white")) + 
+  # this addition will display the coordinate system such that the lines indicating the forecast horizon end at the xaxis
+  scale_y_continuous(expand = c(0, 0)) + coord_cartesian(ylim=c(-0.2,1.05)) 
 
 ## Plot the distributions of prediction horizons
 # rr4 <- group_by(rr, N0.pred.sd, r.pred.sd, demo.stoch, reps) %>%

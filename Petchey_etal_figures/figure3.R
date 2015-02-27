@@ -153,9 +153,11 @@ save.image(file="~/Dropbox (Dept of Geography)/1. prediction concept/det_chaos/d
 ## Only run from here once you have a dataset saved
 rm(list=ls())
 library(ggplot2)
+library(scales)
 library(Hmisc)
 library(dplyr)
 load('~/Dropbox (Dept of Geography)/1. Petchey EFH/ecopredtools/Petchey_etal_figures/data/data2.Rdata')
+#load("/Users/Frank/Documents/My scientific articles/2015 - Prediction horizons/ecopredtools/Petchey_etal_figures/data/data2.Rdata")
 
 ## get average etc prediction horizons by treatments
 CI <- .10
@@ -173,16 +175,17 @@ pd <- position_dodge(0.3)
 aa$N0.pred.sd
 
 ## plot medians
-ggplot(aa[9:32,], aes(x=log10(N0.pred.sd), y=median.pred.horizon,
-               col=as.factor(r.pred.sd), linetype=as.factor(demo.stoch))) +
-  geom_line(position=pd) +
-  geom_point(size=3, position=pd) +
+ggplot(aa[9:32,], aes(x=N0.pred.sd, y=median.pred.horizon,
+                      col=as.factor(r.pred.sd), linetype=as.factor(demo.stoch))) +
+  geom_line(position=pd, alpha=0.75) +
+  geom_point(size=3, position=pd, alpha=0.75) +
   labs(linetype="Demographic stochasticity",
-       col="Uncertainty in r: sd(r)", x="Uncertainty in N0: sd(N0)", y="Prediction horizon") +
-  ylim(c(0, 35)) +
+       col="Uncertainty in r: sd(r)", x="Uncertainty in N0: sd(N0)", y="Forecast horizon") +
+  ylim(c(0, 40)) +
+  scale_x_continuous(breaks=c(0.1, 0.001, 0.00001), trans="log10", label=comma)+
   geom_errorbar(aes(ymax=upper, ymin=lower), width=0.8, position=pd) +
-  theme_bw() + theme(legend.key = element_rect(colour = "white")) 
-  ##geom_point(data=aa[1:8,],size=3, aes(y=jitter(median.pred.horizon)), position=pd)
+  theme_bw() + theme(legend.key = element_rect(colour = "white")) +
+  geom_point(data=aa[1:8,],size=3, aes(y=jitter(median.pred.horizon)), position=pd)
 
 ## not used
 # ggplot(aa, aes(x=log10(N0.pred.sd), y=median.pred.horizon, linetype=demo.stoch)) +
