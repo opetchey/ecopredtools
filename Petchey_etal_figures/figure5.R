@@ -11,7 +11,7 @@ library(mgcv)
 library(dplyr)
 
 ## read in and tidy the data from figure 2 of Beninca et al 2008
-dd <- read.csv("~/Dropbox (Dept of Geography)/1. prediction concept/EFHtools/Petchey_etal_figures/data/r-squared.csv")
+dd <- read.csv("~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petchey_etal_figures/data/fig5.r-squared.csv")
 dd <- melt(dd, id.vars="prediction_time")
 dd <- cbind(dd, do.call(rbind, str_split(dd$variable, "\\.")))
 names(dd) <- c("Prediction.time", "dummy1", "Forecast.proficiency", "Group", "Model")
@@ -65,7 +65,7 @@ fh <- cbind(fh, do.call("rbind", str_split(fh$Model.Group, "\\.")))
 names(fh)[5:6] <- c("Model", "Group")
 
 ## read in the body sizes and the number of trophic links
-ee <- read.csv("~/Dropbox (Dept of Geography)/1. prediction concept/EFHtools/Petchey_etal_figures/data/groups_real.csv")[,1:6]
+ee <- read.csv("~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petchey_etal_figures/data/fig5.groups_real.csv")[,1:6]
 str(ee)
 
 ## get cell volume assuming a sphere
@@ -76,6 +76,8 @@ ee <- group_by(ee, short, long) %>% summarise(mean.size=mean(size, na.rm=T), mea
 
 ## merge the two data sets
 zz <- merge(ee, fh, by.x="short", by.y="Group")
+## if this merge fails, shutdown R, restart it, and try again.
+
 
 ## select only the relevant variables and model
 zz.oo <- subset(zz, long!="nitrogen" & long!="phosphorus" & long!="calanoids copepods" & Model=="nonlinear")

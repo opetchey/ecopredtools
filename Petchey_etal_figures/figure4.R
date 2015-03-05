@@ -12,7 +12,7 @@ library(ggplot2)
 library(Hmisc)
 
 ## Read in and clean the mean forecast horizons
-dd <- read.csv("~/Dropbox (Dept of Geography)/1. prediction concept/ecopredtools/Petchey_etal_figures/data/PH_outputYdata.csv")
+dd <- read.csv("~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petchey_etal_figures/data/fig4.PH_outputYdata.csv")
 dd <- melt(dd)
 dd <- cbind(dd, do.call("rbind", strsplit(as.character(dd$variable), "\\.")))
 names(dd) <- c("Uncertainty", "Junk", "Forecast.horizon", "Variable", "Evolution")
@@ -20,7 +20,7 @@ str(dd)
 dd$num.uncert <- rep(1:4, 6)
 
 ## Read in and clean the sd forecast horizons
-ee <- read.csv("~/Dropbox (Dept of Geography)/1. prediction concept/ecopredtools/Petchey_etal_figures/data/PH_outputERRORdata.csv")
+ee <- read.csv("~/Dropbox (Dept of Geography)/1. petchey efh/ecopredtools/Petchey_etal_figures/data/fig4.PH_outputERRORdata.csv")
 ee <- melt(ee)
 ee <- cbind(ee, do.call("rbind", strsplit(as.character(ee$variable), "\\.")))
 names(ee) <- c("Uncertainty", "Junk", "Forecast.horizon", "Variable", "Evolution")

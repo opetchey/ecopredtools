@@ -1,12 +1,9 @@
 ## Code for figure 3 of Petchey et al
-## Making a graph showing how prediction horizon depends on uncertainty
-## Discrete time Ricker model
 ## Owen Petchey 16.8.2014
 
 ## The same methods are used as in "figure2.r" for getting prediction skill.
 ## Slightly different method for getting prediction horizon (for computational speed reasons)
 ## Prediction horizons are then plotted against uncertainty
-
 
 ## Preliminaries
 rm(list=ls())
@@ -15,7 +12,6 @@ library(ggplot2)
 library(Hmisc)
 library(dplyr)
 set.seed(101)
-
 
 ## The Ricker model and a function to iterate it
 ricker  <- function(N, r, demo.stoch) {
@@ -51,11 +47,9 @@ r.pred.sd <- c(0, 10^c(-5,-3,-1))
 ## uncertainty in N0 for prediction
 N0.pred.sd <-  c(0, 10^c(-5,-3,-1))
 
-# ## error in r for prediction (fraction)
-#r.pred.sd <- seq(0.001, 0.1, 0.01)
-# ## error in N0 for prediction (fraction)
-#N0.pred.sd <-  seq(0.001, 0.1, 0.01)
-
+pred.CV <- c(0.00001, 0.001, 0.1)
+r.pred.sd <- pred.CV*r.real.mean
+N0.pred.sd <- pred.CV*N0.real.mean
 
 ## switch for demographic stochasticity
 demo.stoch <- c(F, T)
@@ -84,7 +78,6 @@ expt$N0.pred <- rnorm(length(expt[,1]), mean=expt$N0.real, sd=expt$N0.pred.sd)
 ## Check the experiment
 str(expt)
 ##ggplot(expt, aes(x=N0.pred)) + geom_density()   + facet_grid(N0.pred.sd ~ r.pred.sd)
-
 
 ## Here, the prediction horizon is defined as when the prediction skill measure
 ## has been below the prediction skill threshold for a certain number of
@@ -135,7 +128,6 @@ get.pred.horizon <- function(pars, pred.skill.threshold, max.its, mov.wind.width
     N.sim[i] <- ricker(N.sim[i-1], pars$r.pred, F)
     ma.cor[j] <- cor(N.real[j:(j+mov.wind.width-1)], N.sim[j:(j+mov.wind.width-1)])
   }
-  
   ## Return the prediction horizon
   tt
 }
@@ -146,18 +138,17 @@ expt$pred.horizon <- rep(NA, length(expt[,1]))
 for(i in 1:length(expt[,1]))
   expt$pred.horizon[i] <- get.pred.horizon(expt[i,], pred.skill.threshold, max.its, mov.wind.width, threshold.duration)
 
+save.image(file="~/Dropbox (Dept of Geography)/1. Petchey EFH/ecopredtools/Petchey_etal_figures/data/fig3.Rdata")
 
-save.image(file="~/Dropbox (Dept of Geography)/1. prediction concept/det_chaos/data2.Rdata")
 
-
-## Only run from here once you have a dataset saved
+## Only run from here once a dataset is saved
 rm(list=ls())
 library(ggplot2)
 library(scales)
 library(Hmisc)
 library(dplyr)
-load('~/Dropbox (Dept of Geography)/1. Petchey EFH/ecopredtools/Petchey_etal_figures/data/data2.Rdata')
-#load("/Users/Frank/Documents/My scientific articles/2015 - Prediction horizons/ecopredtools/Petchey_etal_figures/data/data2.Rdata")
+load('~/Dropbox (Dept of Geography)/1. Petchey EFH/ecopredtools/Petchey_etal_figures/data/data.fig3.Rdata')
+#load("/Users/Frank/Documents/My scientific articles/2015 - Prediction horizons/ecopredtools/Petchey_etal_figures/data/fig3.Rdata")
 
 ## get average etc prediction horizons by treatments
 CI <- .10
@@ -168,35 +159,21 @@ aa <- group_by(expt, N0.pred.sd, r.pred.sd, demo.stoch) %>%
             upper=smedian.hilow(pred.horizon, conf.int=CI)[3],
             lower=smedian.hilow(pred.horizon, conf.int=CI)[2])
 
+aa$N0.pred.CV <- aa$N0.pred.sd/N0.real.mean
+aa$r.pred.CV <- aa$r.pred.sd/r.real.mean
+
 ## amount to dodge by
 pd <- position_dodge(0.3)
 
-## only use the data that isn't NA
-aa$N0.pred.sd
-
 ## plot medians
-ggplot(aa[9:32,], aes(x=N0.pred.sd, y=median.pred.horizon,
-                      col=as.factor(r.pred.sd), linetype=as.factor(demo.stoch))) +
+ggplot(aa, aes(x=N0.pred.CV, y=median.pred.horizon,
+                      col=as.factor(r.pred.CV), linetype=as.factor(demo.stoch))) +
   geom_line(position=pd, alpha=0.75) +
   geom_point(size=3, position=pd, alpha=0.75) +
   labs(linetype="Demographic stochasticity",
-       col="Uncertainty in r: sd(r)", x="Uncertainty in N0: sd(N0)", y="Forecast horizon") +
-  ylim(c(0, 40)) +
+       col="Uncertainty in r: CV(r)", x="Uncertainty in N0: CV(N0)", y="Forecast horizon") +
+  ylim(c(0, 30)) +
   scale_x_continuous(breaks=c(0.1, 0.001, 0.00001), trans="log10", label=comma)+
-  geom_errorbar(aes(ymax=upper, ymin=lower), width=0.8, position=pd) +
-  theme_bw() + theme(legend.key = element_rect(colour = "white")) +
-  geom_point(data=aa[1:8,],size=3, aes(y=jitter(median.pred.horizon)), position=pd)
-
-## not used
-# ggplot(aa, aes(x=log10(N0.pred.sd), y=median.pred.horizon, linetype=demo.stoch)) +
-#   geom_line() +
-#   geom_point() +
-#   labs(linetype="Demographic stochasticity",
-#        col="Uncertainty in r: sd(r)", x="Uncertainty in N0: sd(N0)", y="Prediction horizon") +
-#   ylim(c(0, 40)) +
-#   theme_bw() + theme(legend.key = element_rect(colour = "white")) +
-#   facet_wrap( ~ r.pred.sd)
-
-
-
+  geom_errorbar(aes(ymax=upper, ymin=lower), width=0.8, position=pd, alpha=0.75) +
+  theme_bw() + theme(legend.key = element_rect(colour = "white"))
 
