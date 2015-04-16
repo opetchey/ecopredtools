@@ -197,7 +197,7 @@ save.image(file="~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petch
 rm(list=ls())
 library(ggplot2)
 load("~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petchey_etal_figures/data/fig2b.Rdata")
-#load("/Users/Frank/Documents/My scientific articles/2015 - Prediction horizons/ecopredtools/Petchey_etal_figures/data/data.fig2b.Rdata")
+load("/Users/Frank/Documents/My scientific articles/2015 - Prediction horizons/ecopredtools/Petchey_etal_figures/data/fig2b.Rdata")
 
 ## Plot the loss of prediction skill through time
 rr1$nice.ds <- ifelse(rr1$demo.stoch, "With demographic stochasticity", "Without demographic stochasticity")  
@@ -217,16 +217,19 @@ g <- ggplot(data=rr1, aes(x=its, y=mean.pred.skill, col=as.factor(N0.pred.CV), l
   geom_hline(yintercept=pred.skill.threshold, col="purple", linetype=2, alpha=0.5)
 
 quartz(width=5, height=3.5)
-g + geom_line(data=rr3[rr3$pred.horizon!=Inf,],
-	 						aes(x=pred.horizon,
-                            y=last.pred.skill,
-                            col=as.factor(N0.pred.CV),
-                            linetype=as.factor(K_step.pred.CV)),
-              #position="jitter",
-              alpha=0.7, size=0.7) + # jitter lines
-  theme_bw() + theme(legend.key = element_rect(colour = "white")) + 
-  # this addition will display the coordinate system such that the lines indicating the forecast horizon end at the xaxis
-  scale_y_continuous(expand = c(0, 0)) + coord_cartesian(ylim=c(-0.2,1.05)) 
+# less busy version of figure
+g + theme_bw() + theme(legend.key = element_rect(colour = "white"))
+ggsave("/Users/Frank/Documents/My scientific articles/2015 - Prediction horizons/Figure2b.png", height=3.5, width=5)
+# g + geom_line(data=rr3[rr3$pred.horizon!=Inf,],
+# 	 						aes(x=pred.horizon,
+#                             y=last.pred.skill,
+#                             col=as.factor(N0.pred.CV),
+#                             linetype=as.factor(K_step.pred.CV)),
+#               #position="jitter",
+#               alpha=0.7, size=0.7) + # jitter lines
+#   theme_bw() + theme(legend.key = element_rect(colour = "white")) + 
+#   # this addition will display the coordinate system such that the lines indicating the forecast horizon end at the xaxis
+#   scale_y_continuous(expand = c(0, 0)) + coord_cartesian(ylim=c(-0.2,1.05)) 
 
 
 
