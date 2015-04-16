@@ -148,12 +148,11 @@ library(ggplot2)
 library(scales)
 library(Hmisc)
 library(dplyr)
+library(repmis)
 
-## alter the next line to where you have the data file
-setwd("~/Dropbox (Dept of Geography)/1. Petchey EFH/ecopredtools/Petchey_etal_figures/data")
+## load the already saved data from github (this can take some time depending on the internet connection)
+source_data("https://github.com/opetchey/ecopredtools/blob/master/Petchey_etal_figures/data/fig3.Rdata?raw=True")
 
-## load the saved data
-load("fig3.Rdata")
 
 ## get average etc prediction horizons by treatments
 CI <- .10

@@ -143,12 +143,10 @@ rr3$last.pred.skill[seq(1,length(rr3$last.pred.skill), 2)] <- -0.2
 ## Only run from here once dataset is saved.
 rm(list=ls())
 library(ggplot2)
+library(repmis)
 
-## alter the next line to where you have the data file
-setwd("~/Dropbox (Dept of Geography)/1. Petchey EFH/ecopredtools/Petchey_etal_figures/data")
-
-## load the already saved data
-load("fig2a.Rdata")
+## load the already saved data from github (this can take some time depending on the internet connection)
+source_data("https://github.com/opetchey/ecopredtools/blob/master/Petchey_etal_figures/data/fig2a.Rdata?raw=True")
 
 ## Plot the loss of prediction skill through time
 rr1$nice.ds <- ifelse(rr1$demo.stoch, "With demographic stochasticity", "Without demographic stochasticity")  
