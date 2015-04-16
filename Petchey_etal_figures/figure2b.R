@@ -1,4 +1,5 @@
-## Code for figure 2b of Petchey et al
+## Code for figure 2b, Petchey et al. 2015 Ecology Letters.
+
 ## This figure and the underlying analysis were suggested by a reviewer.
 ## The reviewer's idea was to include a case study including
 ## a directional change in environental
@@ -188,16 +189,20 @@ rr2 <- group_by(rr1, N0.pred.sd, r.pred.sd, K_step.pred.sd, demo.stoch) %>%
 rr3 <- rr2[rep(as.numeric(rownames(rr2)), each=2),]
 rr3$last.pred.skill[seq(1,length(rr3$last.pred.skill), 2)] <- -0.2
 
-save.image(file="~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petchey_etal_figures/data/fig2b.Rdata")
+## Save the data if not already done.
+#save.image(file="fig2b.Rdata")
 
 
 
 ## Only run from here once a dataset is saved
-
 rm(list=ls())
 library(ggplot2)
-load("~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petchey_etal_figures/data/fig2b.Rdata")
-#load("/Users/Frank/Documents/My scientific articles/2015 - Prediction horizons/ecopredtools/Petchey_etal_figures/data/data.fig2b.Rdata")
+
+## alter the next line to where you have the data file
+setwd("~/Dropbox (Dept of Geography)/1. Petchey EFH/ecopredtools/Petchey_etal_figures/data")
+
+## load the saved data
+load("fig2b.Rdata")
 
 ## Plot the loss of prediction skill through time
 rr1$nice.ds <- ifelse(rr1$demo.stoch, "With demographic stochasticity", "Without demographic stochasticity")  
@@ -208,7 +213,6 @@ rr1$K_step.pred.CV <- rr1$K_step.pred.sd / K_step.real.mean
 rr3$N0.pred.CV <- rr3$N0.pred.sd / N0.real.mean
 rr3$K_step.pred.CV <- rr3$K_step.pred.sd / K_step.real.mean
 
-
 g <- ggplot(data=rr1, aes(x=its, y=mean.pred.skill, col=as.factor(N0.pred.CV), linetype=as.factor(K_step.pred.CV))) +
   geom_line(size=0.7, alpha=0.7) + # transparaent colours to better see when lines lay on top of eachother
   #geom_point(size=1.5, alpha=0.5) + # make graph less busy
@@ -216,18 +220,7 @@ g <- ggplot(data=rr1, aes(x=its, y=mean.pred.skill, col=as.factor(N0.pred.CV), l
   facet_grid(.~nice.ds) + 
   geom_hline(yintercept=pred.skill.threshold, col="purple", linetype=2, alpha=0.5)
 
-quartz(width=5, height=3.5)
-g + geom_line(data=rr3[rr3$pred.horizon!=Inf,],
-	 						aes(x=pred.horizon,
-                            y=last.pred.skill,
-                            col=as.factor(N0.pred.CV),
-                            linetype=as.factor(K_step.pred.CV)),
-              #position="jitter",
-              alpha=0.7, size=0.7) + # jitter lines
-  theme_bw() + theme(legend.key = element_rect(colour = "white")) + 
-  # this addition will display the coordinate system such that the lines indicating the forecast horizon end at the xaxis
-  scale_y_continuous(expand = c(0, 0)) + coord_cartesian(ylim=c(-0.2,1.05)) 
-
+g + theme_bw() + theme(legend.key = element_rect(colour = "white"))
 
 
 

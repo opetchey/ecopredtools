@@ -1,5 +1,4 @@
-## Code for figure 2 of Petchey et al
-## Owen Petchey 16.8.2014
+## Code for figure 2a, Petchey et al. 2015 Ecology Letters.
 
 ## The prediction skill is calculated by making a "real" time series from a "real" value of r and N0.
 ## Then a predicted time series is made, but with a value of r and N0 with some error (uncertainty).
@@ -137,14 +136,19 @@ rr2 <- group_by(rr1, N0.pred.sd, r.pred.sd, demo.stoch) %>%
 rr3 <- rr2[rep(as.numeric(rownames(rr2)), each=2),]
 rr3$last.pred.skill[seq(1,length(rr3$last.pred.skill), 2)] <- -0.2
 
-save.image(file="~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petchey_etal_figures/data/fig2a.Rdata")
+## Save the data if not already done.
+#save.image(file="fig2a.Rdata")
 
 
-## Only run from here once dataset is saved
+## Only run from here once dataset is saved.
 rm(list=ls())
 library(ggplot2)
-load("~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petchey_etal_figures/data/fig2a.Rdata")
-#load("/Users/Frank/Documents/My scientific articles/2015 - Prediction horizons/ecopredtools/Petchey_etal_figures/data/fig2a.Rdata")
+
+## alter the next line to where you have the data file
+setwd("~/Dropbox (Dept of Geography)/1. Petchey EFH/ecopredtools/Petchey_etal_figures/data")
+
+## load the already saved data
+load("fig2a.Rdata")
 
 ## Plot the loss of prediction skill through time
 rr1$nice.ds <- ifelse(rr1$demo.stoch, "With demographic stochasticity", "Without demographic stochasticity")  
@@ -160,15 +164,9 @@ g <- ggplot(data=rr1, aes(x=its, y=mean.pred.skill, col=as.factor(N0.pred.CV), l
   # transparaent colours to better see when lines lay on top of eachother
   #geom_point(size=1.5, alpha=0.5) + # make graph less busy
   labs(col="CV(N0)", linetype="CV(r)", x="Time (generations)", y="Forecast proficiency") +
-  facet_grid(.~nice.ds) + 
+  facet_grid(.~nice.ds)  +
   geom_hline(yintercept=pred.skill.threshold, col="purple", linetype=2, alpha=0.5)
 
-quartz(width=8, height=3.5)
-g + geom_line(data=rr3, aes(x=pred.horizon,
-                            y=last.pred.skill,
-                            col=as.factor(N0.pred.CV),
-                            linetype=as.factor(r.pred.CV)),
-              alpha=0.7, size=0.7) + # jitter lines
-  theme_bw() + theme(legend.key = element_rect(colour = "white")) + 
-  # this addition will display the coordinate system such that the lines indicating the forecast horizon end at the xaxis
-  scale_y_continuous(expand = c(0, 0)) + coord_cartesian(ylim=c(-0.2,1.05)) 
+g + theme_bw() + theme(legend.key = element_rect(colour = "white"))
+
+

@@ -1,7 +1,7 @@
-## Code for figure 3 of Petchey et al
+## Code for figure 2b, Petchey et al. 2015 Ecology Letters.
 ## Owen Petchey 16.8.2014
 
-## The same methods are used as in "figure2.r" for getting prediction skill.
+## The same methods are used as in "figure2a.r" for getting prediction skill.
 ## Slightly different method for getting prediction horizon (for computational speed reasons)
 ## Prediction horizons are then plotted against uncertainty
 
@@ -138,7 +138,8 @@ expt$pred.horizon <- rep(NA, length(expt[,1]))
 for(i in 1:length(expt[,1]))
   expt$pred.horizon[i] <- get.pred.horizon(expt[i,], pred.skill.threshold, max.its, mov.wind.width, threshold.duration)
 
-save.image(file="~/Dropbox (Dept of Geography)/1. Petchey EFH/ecopredtools/Petchey_etal_figures/data/fig3.Rdata")
+## Save the data if not already done.
+#save.image(file="fig3.Rdata")
 
 
 ## Only run from here once a dataset is saved
@@ -147,8 +148,12 @@ library(ggplot2)
 library(scales)
 library(Hmisc)
 library(dplyr)
-load('~/Dropbox (Dept of Geography)/1. Petchey EFH/ecopredtools/Petchey_etal_figures/data/fig3.Rdata')
-#load("/Users/Frank/Documents/My scientific articles/2015 - Prediction horizons/ecopredtools/Petchey_etal_figures/data/fig3.Rdata")
+
+## alter the next line to where you have the data file
+setwd("~/Dropbox (Dept of Geography)/1. Petchey EFH/ecopredtools/Petchey_etal_figures/data")
+
+## load the saved data
+load("fig3.Rdata")
 
 ## get average etc prediction horizons by treatments
 CI <- .10
@@ -165,7 +170,6 @@ aa$r.pred.CV <- aa$r.pred.sd/r.real.mean
 ## amount to dodge by
 pd <- position_dodge(0.3)
 
-quartz()
 ## plot medians
 ggplot(aa, aes(x=N0.pred.CV, y=median.pred.horizon,
                       col=as.factor(r.pred.CV), linetype=as.factor(demo.stoch))) +

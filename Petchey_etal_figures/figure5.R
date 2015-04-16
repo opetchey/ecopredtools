@@ -10,8 +10,12 @@ library(stringr)
 library(mgcv)
 library(dplyr)
 
+## alter the next line to where you have the data file
+setwd("~/Dropbox (Dept of Geography)/1. Petchey EFH/ecopredtools/Petchey_etal_figures/data")
+
 ## read in and tidy the data from figure 2 of Beninca et al 2008
-dd <- read.csv("~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petchey_etal_figures/data/fig5.r-squared.csv")
+dd <- read.csv("fig5.r-squared.csv")
+
 dd <- melt(dd, id.vars="prediction_time")
 dd <- cbind(dd, do.call(rbind, str_split(dd$variable, "\\.")))
 names(dd) <- c("Prediction.time", "dummy1", "Forecast.proficiency", "Group", "Model")
@@ -65,7 +69,7 @@ fh <- cbind(fh, do.call("rbind", str_split(fh$Model.Group, "\\.")))
 names(fh)[5:6] <- c("Model", "Group")
 
 ## read in the body sizes and the number of trophic links
-ee <- read.csv("~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petchey_etal_figures/data/fig5.groups_real.csv")[,1:6]
+ee <- read.csv("fig5.groups_real.csv")[,1:6]
 str(ee)
 
 ## get cell volume assuming a sphere
@@ -85,23 +89,27 @@ zz.oo$log.mean <- log10(zz.oo$mean.size)
 
 ## plot the size - forecast horizon relationship
 quartz(width=4, height=3.5)
-ggplot(zz.oo, aes(x=mean.size, y=mean, col=long)) + theme_bw() +
+ggplot(zz.oo, aes(x=mean.size, y=mean, col=long, shape=long)) + theme_bw() +
+  scale_shape_manual(values=1:nlevels(zz.oo$long)) +
   geom_point(size=5) +
-  geom_errorbar(aes(ymax=upr, ymin=lwr), width=0.0) +
+  geom_errorbar(aes(ymax=upr, ymin=lwr), width=0.1) +
   scale_x_log10() +
   xlab("Organism size") +
   ylab("Forecast horizon") +
-  scale_color_discrete(name="Group") + theme(legend.position="none")
+  scale_colour_manual(values=1:nlevels(zz.oo$long), name="Group") + theme(legend.position="none")
+ggsave("/Users/Frank/Documents/My scientific articles/2015 - Prediction horizons/Figure5a.png", height=3.5, width=4)
 
 ## plot the number of links - forecast horizon relationship
 quartz(width=5.75, height=3.5)
-ggplot(zz.oo, aes(x=mean.link, y=mean, col=long)) +
+ggplot(zz.oo, aes(x=mean.link, y=mean, col=long, shape=long)) +
+  scale_shape_manual(values=1:nlevels(zz.oo$long)) +
   geom_point(size=5) +
-  geom_errorbar(aes(ymax=upr, ymin=lwr), width=0.0) +
+  geom_errorbar(aes(ymax=upr, ymin=lwr), width=0.1) +
   xlab("Number of trophic links") +
   ylab("Forecast horizon") +
-  scale_color_discrete(name="Group")  + theme_bw() + theme(legend.key = element_rect(colour = "white"))
-
+  scale_colour_manual(values=1:nlevels(zz.oo$long), name="Group")  + theme_bw() + theme(legend.key = element_rect(colour = "white"))+
+  guides(colour = guide_legend("Group"), shape = guide_legend("Group"))
+ggsave("/Users/Frank/Documents/My scientific articles/2015 - Prediction horizons/Figure5b.png", height=3.5, width=5.75)
 
 ## and check the stats of the relationships
 library(nlme)

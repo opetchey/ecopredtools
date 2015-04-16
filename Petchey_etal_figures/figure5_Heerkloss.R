@@ -9,9 +9,10 @@ library(ggplot2)
 library(stringr)
 library(mgcv)
 library(dplyr)
+library(RCurl)
 
 ## read in and tidy the data from figure 2 of Beninca et al 2008
-dd <- read.csv("~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petchey_etal_figures/data/fig5.r-squared.csv")
+dd <- read.csv(text=getURL("https://raw.githubusercontent.com/opetchey/ecopredtools/master/Petchey_etal_figures/data/fig5.r-squared.csv"))
 dd <- melt(dd, id.vars="prediction_time")
 dd <- cbind(dd, do.call(rbind, str_split(dd$variable, "\\.")))
 names(dd) <- c("Prediction.time", "dummy1", "Forecast.proficiency", "Group", "Model")
@@ -65,7 +66,7 @@ fh <- cbind(fh, do.call("rbind", str_split(fh$Model.Group, "\\.")))
 names(fh)[5:6] <- c("Model", "Group")
 
 ## read in the body sizes and the number of trophic links
-ee <- read.csv("~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petchey_etal_figures/data/fig5.groups_real_Heerkloss.csv")[,1:7]
+ee <- read.csv(text=getURL("https://raw.githubusercontent.com/opetchey/ecopredtools/master/Petchey_etal_figures/data/fig5.groups_real_Heerkloss.csv"))[,1:7]
 str(ee)
 
 ## get cell volume assuming a sphere
