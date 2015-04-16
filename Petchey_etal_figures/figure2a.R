@@ -143,7 +143,7 @@ save.image(file="~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petch
 ## Only run from here once dataset is saved
 rm(list=ls())
 library(ggplot2)
-load("~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petchey_etal_figures/data/data.fig2a.Rdata")
+load("~/Dropbox (Dept of Geography)/1. petchey EFH/ecopredtools/Petchey_etal_figures/data/fig2a.Rdata")
 #load("/Users/Frank/Documents/My scientific articles/2015 - Prediction horizons/ecopredtools/Petchey_etal_figures/data/fig2a.Rdata")
 
 ## Plot the loss of prediction skill through time

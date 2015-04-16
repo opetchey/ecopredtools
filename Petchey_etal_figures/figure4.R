@@ -38,6 +38,7 @@ dd <- filter(dd, Variable!="extrate")
 ## set dodge value for ggplot
 pd <- position_dodge(0.3)
 
+quartz()
 ## plotting
 ggplot(dd, aes(x=num.uncert, y=Forecast.horizon, col=Variable, linetype=Evolution)) +
 	geom_point(size=3, position=pd) +

@@ -147,7 +147,7 @@ library(ggplot2)
 library(scales)
 library(Hmisc)
 library(dplyr)
-load('~/Dropbox (Dept of Geography)/1. Petchey EFH/ecopredtools/Petchey_etal_figures/data/data.fig3.Rdata')
+load('~/Dropbox (Dept of Geography)/1. Petchey EFH/ecopredtools/Petchey_etal_figures/data/fig3.Rdata')
 #load("/Users/Frank/Documents/My scientific articles/2015 - Prediction horizons/ecopredtools/Petchey_etal_figures/data/fig3.Rdata")
 
 ## get average etc prediction horizons by treatments
@@ -165,6 +165,7 @@ aa$r.pred.CV <- aa$r.pred.sd/r.real.mean
 ## amount to dodge by
 pd <- position_dodge(0.3)
 
+quartz()
 ## plot medians
 ggplot(aa, aes(x=N0.pred.CV, y=median.pred.horizon,
                       col=as.factor(r.pred.CV), linetype=as.factor(demo.stoch))) +
