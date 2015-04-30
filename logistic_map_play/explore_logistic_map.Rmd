@@ -3,14 +3,17 @@ title: "Looking at predictability and chaos of the logistic map"
 author: "Owen Petchey"
 date: "30 Apr 2015"
 output:
+  pdf_document:
+    toc: yes
   html_document:
     toc: yes
 ---
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, message=FALSE}
 rm(list=ls())
 library(ggplot2)
 library(tseriesChaos)
+library(RCurl)
 set.seed(2)
 ```
 
@@ -22,9 +25,9 @@ Set the value of r, the number of iterations, the initial abundance of populatio
 
 ```{r}
 r <- 3.78
-max_its <- 10000
+max_its <- 100
 N0 <- runif(1, 0.001, 0.1)
-N0.diff <- 0.0001
+N0.diff <- N0/100000
 ```
 
 
@@ -81,7 +84,7 @@ From this graph, select a range of times over which to calculate the growth rate
 
 ```{r}
 min.time <- 1 ## not less than 1 please
-max.time <- 15
+max.time <- 20
 ```
 
 And plot this part of the data with the estimated Lyapunov exponent:
@@ -112,21 +115,23 @@ output2 <- lyap_k(N2, m=4, d=4, ref=4, t=4, s=40, eps=4)
 
 Again need to carefully select the time range over which to calculate the Lyapunov exponent. Find it from these graphs
 ```{r}
-plot(output1)
-plot(output2)
+plot(output1, type="b")
+plot(output2, type="b")
 ```
 
-Select time range:
+Select time range for each Lyapunov exponent (this is really fudgy at present!):
 
 ```{r}
-start <- 0
-end <- 4
+start <- 4
+end <- 8
+le1 <- lyap(output1, start, end)[2]
 ```
 
 Get the two Lyapunov exponents:
 
 ```{r}
-le1 <- lyap(output1, start, end)[2]
+start <- 4
+end <- 8
 le2 <- lyap(output2, start, end)[2]
 ```
 
@@ -154,10 +159,11 @@ for(j in 1:length(rs)) {
 write.csv(cbind(rs, lyap), "~/Desktop/rs_lyaps.csv")
 ```
 
-```{r, echo=FALSE}
-dd <- read.csv("~/Desktop/rs_lyaps.csv")
-```
+Load the previously created data from github (code might need adapting for windows):
 
+```{r, echo=FALSE}
+dd <- read.csv(text=getURL("https://raw.githubusercontent.com/opetchey/ecopredtools/logistic_map_play/logistic_map_play/rs_lyaps.csv"))
+```
 
 # Comparison of the three methods
 
@@ -184,4 +190,5 @@ le1
 le2
 ```
 
+Not brilliant, but if really bad, make sure for appropriate time windows over which the divergence rate is calculated.
 
