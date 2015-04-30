@@ -1,0 +1,110 @@
+---
+title: "Exploring deterministic chaos, using the logistic map"
+author: "Owen"
+date: "23 April 2015"
+output: html_document
+runtime: shiny
+---
+
+Deterministic chaos has implications for predictability...
+
+## Simulating the logistic map
+
+Change the growth rate r and see how the dynamics change. At what value of r do you think the dynamics switch from being non-chaotic to chaotic?
+
+```{r, echo=FALSE}
+
+inputPanel(
+  
+  sliderInput("r", label = "Growth rate r:",
+              min = 2.5, max = 4, value = 3.7, step = 0.01),
+  
+  numericInput("N0", "Initial abundance, population 1", 0.5),
+  
+  numericInput("N0.diff", "Difference in initial abundance, pop1 v. pop2", 0.00001)
+  
+  
+)
+
+
+renderPlot({
+  
+  max_its <- 100
+  N1 <- numeric(length=max_its)
+  N1[1] <- input$N0
+  N2 <- numeric(length=max_its)
+  N2[1] <- input$N0 + input$N0.diff
+  for(i in 2:max_its) {
+    N1[i] <- input$r * N1[i-1] * (1 - N1[i-1])
+    N2[i] <- input$r * N2[i-1] * (1 - N2[i-1])
+  }
+  
+  layout(matrix(1:4, 2, 2, byrow=T))
+  plot(1:max_its, N1, type="l",
+       xlab="Time",
+       ylab="Abundance",
+       lwd=5)
+  lines(1:max_its, N2, type="l",
+        lwd=3, col="red")
+  
+  diffs <- abs(N1-N2)
+  
+  if(min(diffs)==0) {
+    
+    plot(1:max_its, abs(N1-N2), type="l",
+         xlab="Time",
+         ylab="Absolute difference in abundance",
+         lwd=5)
+    
+    max.time <- 30
+    y <- abs(N1-N2)
+    these <- which(y!=0)
+    x <- c(1:max.time)[these]
+    y <- log10(y[these])
+    
+    plot(x, y, type="p",
+         xlab="Time",
+         ylab="log(Absolute difference in abundance)",
+         main=paste("Growth rate of difference =",  round(coef(lm(log10(y)~x))[2],4)))
+    abline(lm(log10(y)~x))
+    
+ 
+    
+  }
+  
+   if(min(diffs)>0) {
+     
+    plot(1:max_its, log10(abs(N1-N2)), type="l",
+         xlab="Time",
+         ylab="log(Absolute difference in abundance)",
+         lwd=5)
+    
+    max.time <- 30
+    x <- 2:max.time
+    y <- log10(abs(N1-N2))[2:max.time]
+    plot(x, y, type="p",
+         xlab="Time",
+         ylab="log(Absolute difference in abundance)",
+         main=paste("Growth rate of difference =",  round(coef(lm(y~x))[2],4)))
+    abline(lm(y~x))
+    
+    plot(x, 10^y, type="p",
+         xlab="Time",
+         ylab="Absolute difference in abundance")
+    
+    
+    
+  }
+  
+  library(tseriesChaos)
+  
+  
+})
+
+
+
+
+```
+
+Add use of tschaos to get Lyapunov exponent.
+See if there is an analytical approach to get LE.

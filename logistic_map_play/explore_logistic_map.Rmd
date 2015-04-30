@@ -1,0 +1,117 @@
+---
+title: "Looking at predictability and chaos of the logistic map"
+author: "Owen Petchey"
+date: "30 Apr 2015"
+output: html_document
+---
+
+
+
+```{r}
+
+r <- 3.6
+max_its <- 10000
+N0 <- 0.1
+N0.diff <- 0.0001
+N1 <- numeric(length=max_its)
+N1[1] <- N0
+N2 <- numeric(length=max_its)
+N2[1] <- N0 + N0.diff
+for(i in 2:max_its) {
+  N1[i] <- r * N1[i-1] * (1 - N1[i-1])
+  N2[i] <- r * N2[i-1] * (1 - N2[i-1])
+}
+
+plot(1:max_its, N1, type="l",
+     xlab="Time",
+     ylab="Abundance",
+     lwd=5)
+lines(1:max_its, N2, type="l",
+      lwd=3, col="red")
+
+diffs <- abs(N1-N2)
+
+if(min(diffs)==0) {
+  
+  plot(1:max_its, abs(N1-N2), type="l",
+       xlab="Time",
+       ylab="Absolute difference in abundance",
+       lwd=5)
+  
+  max.time <- 15
+  y <- abs(N1-N2)
+  these <- which(y!=0)
+  x <- c(1:max.time)[these]
+  y <- log10(y[these])
+  
+  plot(x, y, type="p",
+       xlab="Time",
+       ylab="log(Absolute difference in abundance)",
+       main=paste("Growth rate of difference =",  round(coef(lm(log10(y)~x))[2],4)))
+  abline(lm(log10(y)~x))
+  
+  
+  
+}
+
+if(min(diffs)>0) {
+  
+  plot(1:max_its, log10(abs(N1-N2)), type="l",
+       xlab="Time",
+       ylab="log(Absolute difference in abundance)",
+       lwd=5)
+  
+  max.time <- 15
+  x <- 2:max.time
+  y <- log10(abs(N1-N2))[2:max.time]
+  plot(x, y, type="p",
+       xlab="Time",
+       ylab="log(Absolute difference in abundance)",
+       main=paste("Growth rate of difference =",  round(coef(lm(y~x))[2],4)))
+  abline(lm(y~x))
+  
+  plot(x, 10^y, type="p",
+       xlab="Time",
+       ylab="Absolute difference in abundance")
+  
+  
+}
+
+library(tseriesChaos)
+output1 <- lyap_k(N1, m=4, d=4, ref=4, t=4, s=40, eps=4)
+plot(output1)
+lyap(output1, 15, 30)
+output2 <- lyap_k(N2, m=4, d=4, ref=4, t=4, s=40, eps=4)
+plot(output2)
+lyap(output2, 15, 30)
+
+```
+
+
+```{r}
+# lyap=zeros(1,1000);
+# j=0;
+# for(r=3:0.001:4)
+#     xn1=rand(1);
+#     lyp=0;
+#     j=j+1;
+#     for(i=1:10000)
+#         xn=xn1;
+#         %logistic map
+#         xn1=r*xn*(1-xn);
+#        %wait for transient
+#        if(i>300)
+#            % calculate teh sum of logaritm
+#            lyp=lyp+log(abs(r-2*r*xn1));
+#        end
+#     end
+#     %calculate lyapun
+#     lyp=lyp/10000;
+#     lyap(j)=lyp;
+# end
+# r=3:0.001:4;
+# plot(r,lyap);
+
+```
+
+
