@@ -3,9 +3,9 @@ title: "Looking at predictability and chaos of the logistic map"
 author: "Owen Petchey"
 date: "30 Apr 2015"
 output:
-  pdf_document:
-    toc: yes
   html_document:
+    toc: yes
+  pdf_document:
     toc: yes
 ---
 
@@ -71,7 +71,7 @@ qplot(x=N1[-length(N1)], alpha=I(0.01), size=I(5),
 
 # Estimate Lyapunov exponent from growth in difference
 
-### Distance between two time series
+## Distance between two time series
 
 Get the absolute difference between the two time series:
 
@@ -116,9 +116,25 @@ abline(lm(y~x))
 le0 <- coef(lm(y~x))[2]
 ```
 
-### Average distance between lots of time series
+## Average distance between lots of time series
 
 This would recreate the method used to produce figure 5 in [Nychka et al (1992) Finding Chaos in Noisy Systems](http://www.eeb.cornell.edu/Ellner/pubs/NychkaFindingChaos92.pdf). (Not yet implemented.) Calculates the mean pairwise distance among a cohort of trajectories through time. (By the way, Nychka et al (1992) looks at calculating LE for noisy systems, and figure 5 shows growth of distance among trajectories is common to deterministic and stochastic chaotic systems.)
+
+```{r}
+number_of_time_series <- 100
+nits <- 40
+Ns <- matrix(0, nits, number_of_time_series)
+Ns[1,] <- runif(number_of_time_series, 0.4, 0.40001)
+for(i in 1:number_of_time_series) 
+  for(j in 2:nits)
+    Ns[j, i] <- r * Ns[j-1, i] * (1 - Ns[j-1, i])
+log.diff <- log(apply(Ns, 1, function(x) mean(abs(dist(x)))))
+plot(log.diff,
+     xlab="Time", ylab="log mean pairwise distance")
+time.to <- 20
+ttimes <- 1:time.to
+le0.1 <- coef(lm(log.diff[ttimes] ~ ttimes))[2]  
+```
 
 
 # Calculating the Lyapunov exponent by time-delayed embedding (a direct method)
@@ -186,7 +202,7 @@ str(preds)
 
 ggplot(hh1, aes(x=x, y=y)) +
   geom_point(alpha=0.01,  size=5, position = position_jitter(w = 0.02, h = 0.02)) +
-  geom_line(aes(x=x, y=fit), data=preds) #+
+  geom_line(aes(x=x, y=fit), data=preds, col="red") #+
 #  geom_ribbon(aes(x=x, ymin=fit-se.fit, ymax=fit+se.fit), data=preds)
 ## not sure why I can't get the se.fit ribbon working
 
@@ -273,6 +289,7 @@ dd <- read.csv(text=getURL("https://raw.githubusercontent.com/opetchey/ecopredto
 ## assemble the data
 dd.all <- rbind(data.frame(dd, method=I("analytic")),
                 c(r, le0, "divergence rate"),
+                c(r, le0.1, "divergence rate (mean)"),
                 c(r, le1, "Time del. emb. manual rep1"),
                 c(r, le1.1, "Time del. emb. spline rep1"),
                 c(r, le2, "Time del. emb. manual rep2"),
@@ -286,14 +303,14 @@ dd.all$method <- as.factor(dd.all$method)
 
 ```{r, warning=FALSE}
 qplot(x=rs, y=lyap, data=filter(dd.all, method=="analytic"), geom="line") +
-  geom_point(aes(x=rs, y=lyap, shape=method), size=3, data=filter(dd.all, method!="analytic"))
+  geom_point(aes(x=rs, y=lyap, col=method), size=3, data=filter(dd.all, method!="analytic"))
 ```
 
 And zoomed in:
 
 ```{r, warning=FALSE}
 qplot(x=rs, y=lyap, data=filter(dd.all, method=="analytic"), geom="line") +
-  geom_point(aes(x=rs, y=lyap, shape=method),  size=3, data=filter(dd.all, method!="analytic")) +
+  geom_point(aes(x=rs, y=lyap, col=method),  size=3, data=filter(dd.all, method!="analytic")) +
    coord_cartesian(xlim=c(r-0.1, r+0.1), ylim=c(-1, 0.5))
 ```
 
