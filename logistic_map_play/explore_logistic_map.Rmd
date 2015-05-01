@@ -3,9 +3,9 @@ title: "Looking at predictability and chaos of the logistic map"
 author: "Owen Petchey"
 date: "30 Apr 2015"
 output:
-  html_document:
-    toc: yes
   pdf_document:
+    toc: yes
+  html_document:
     toc: yes
 ---
 
