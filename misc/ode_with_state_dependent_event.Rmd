@@ -1,0 +1,83 @@
+---
+title: "Simulating a system of ODEs with state dependent events"
+author: "Owen Petchey"
+date: "15 Jul 2015"
+output: html_document
+---
+
+When simulating population dynamics (for example) using a system of ordinary differential equations, we may want to have state dependent events. For example, if one of the state variables (i.e., population sizes) reaches a certain value, we may wish to set it to zero. (This is often done in simulations of population dynamics, to reflect there being a minimum viable population size.) The code below describes how to implement such an state dependent event.
+
+Acknowledgement to the [deSolve vignette](http://cran.r-project.org/web/packages/deSolve/vignettes/deSolve.pdf) and [this question](http://stackoverflow.com/questions/18869884/ode-multiple-roots-and-events-r) on stackoverflow.
+
+First load the deSolve library:
+```{r}
+require(deSolve)
+```
+
+Define the population dynamic model (here a simple two species predator prey model):
+```{r}
+pp.model1 <- function(t, start, parms) {
+  
+  N <- start["N"]
+  P <- start["P"]
+  
+  with(as.list(parms), {
+    dN <- r*N - a*N*P
+    dP <- e*a*N*P - d*P
+    list(c(dN, dP))
+  })
+}
+```
+
+Define the "root function". As the ode solver does its work, it checks if any of the quantities here equal zero. In this case we are checking if the value of either of the state variables, minus a threshold value, equals zero.
+```{r}
+rootfunc <- function(t,y,parms) c(y[1]-threshold.value, y[2]-threshold.value)
+```
+
+If either of the quantities in the root function equal zero, then an event is triggered. The nature of the event is specified in the event function. Here, we set the variable that is equal to the threshold value to zero:
+```{r}
+eventfunc <- function(t,y,parms) {
+  if((y[1]-threshold.value)<0) y[1] <- 0
+  if((y[2]-threshold.value)<0) y[2] <- 0
+  return(y)
+}
+```
+
+Lets give this a go. Set the times, start values, and parameters used in the ODE:
+```{r}
+time <- seq(0, 50, 0.1)
+start <- c(N=10, P=10)
+parms <- c(r=1.2,
+           a=0.2,
+           e=0.1,
+           d=0.1)
+```
+
+Set the threshold value that triggers an event:
+```{r}
+threshold.value <- 0.25
+```
+
+Simulate with the state dependent event:
+```{r}
+dd1 <- lsodar(start, time, pp.model1, parms,
+              rootfun = rootfunc, events = list(func=eventfunc, root = TRUE))
+```
+
+And without the state dependent event:
+```{r}
+dd2 <- lsodar(start, time, pp.model1, parms)
+```
+
+And plot the dynamics of both cases:
+```{r}
+matplot(dd1[,1], (dd1[,c(2,3)]), type="l", lwd=6, lty="solid", log="", ylim=c(0.01,25),
+        xlab="Time", ylab="Population density")
+matlines(dd2[,1], (dd2[,c(2,3)]), type="l", lwd=3, lty="solid")
+abline(h=threshold.value)
+```
+
+Very different dynamics in this case.
+
+
+
