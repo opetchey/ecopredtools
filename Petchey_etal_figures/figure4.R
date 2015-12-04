@@ -40,7 +40,7 @@ dd <- filter(dd, Variable!="extrate")
 pd <- position_dodge(0.3)
 
 ## plotting
-ggplot(dd, aes(x=num.uncert, y=Forecast.horizon, col=Variable, linetype=Evolution)) +
+p <- ggplot(dd, aes(x=num.uncert, y=Forecast.horizon, col=Variable, linetype=Evolution)) +
 	geom_point(size=3, position=pd) +
 	geom_line(position=pd) +
   	geom_errorbar(aes(ymax=upper, ymin=lower), width=0.1, position=pd) +
@@ -53,10 +53,69 @@ ggplot(dd, aes(x=num.uncert, y=Forecast.horizon, col=Variable, linetype=Evolutio
                          breaks=c("evo", "noevo"),
                          labels=c("Yes", "No")) +
     theme_bw() + theme(legend.key = element_rect(colour = "white"))
+p
 
 
 
 
+############
+## Below some code to give figures containing only parts of the data
+
+
+## get the colours used:
+ggplot_build(p)$data
+
+## only evolution off or on
+ggplot(filter(dd, Evolution=="evo"), aes(x=num.uncert, y=Forecast.horizon, col=Variable, linetype=Evolution)) +
+  geom_point(size=3, position=pd) +
+  geom_line(position=pd, linetype="dashed") +
+  geom_errorbar(aes(ymax=upper, ymin=lower), width=0.1, position=pd) +
+  xlab("Uncertainty in environment conditions\n(1=low, 4=high)") +
+  ylab("Forecast horizon") +
+  ylim(0, 100) +
+  scale_color_discrete(name="Variable",
+                       breaks=c("extrate", "singlepop", "totalbiomass"),
+                       labels=c("Extinction rate", "Population abundance", "Total biomass")) +
+  scale_linetype_manual(name="Evolution",
+                          breaks=c("evo", "noevo"),
+                          labels=c("Yes", "No"),
+                          values=c("dashed")) +
+  theme_bw() + theme(legend.key = element_rect(colour = "white"))
+
+## only population abundance
+ggplot(filter(dd, Variable=="singlepop"), aes(x=num.uncert, y=Forecast.horizon, col=Variable, linetype=Evolution)) +
+  geom_point(size=3, position=pd) +
+  geom_line(position=pd) +
+  geom_errorbar(aes(ymax=upper, ymin=lower), width=0.1, position=pd) +
+  xlab("Uncertainty in environment conditions\n(1=low, 4=high)") +
+  ylab("Forecast horizon") +
+  ylim(0, 100) +
+  scale_color_discrete(name="Variable",
+                       breaks=c("extrate", "singlepop", "totalbiomass"),
+                       labels=c("Extinction rate", "Population abundance", "Total biomass")) +
+  scale_linetype_manual(name="Evolution",
+                        breaks=c("evo", "noevo"),
+                        labels=c("Yes", "No"),
+                        values=c("solid","dashed")) +
+  theme_bw() + theme(legend.key = element_rect(colour = "white"))
+
+## only total biomass
+ggplot(filter(dd, Variable=="totalbiomass"), aes(x=num.uncert, y=Forecast.horizon, col=Variable, linetype=Evolution)) +
+  geom_point(size=3, position=pd) +
+  geom_line(position=pd) +
+  geom_errorbar(aes(ymax=upper, ymin=lower), width=0.1, position=pd) +
+  xlab("Uncertainty in environment conditions\n(1=low, 4=high)") +
+  ylab("Forecast horizon") +
+  ylim(0, 100) +
+  scale_color_manual(name="Variable",
+                       breaks=c("extrate", "singlepop", "totalbiomass"),
+                       labels=c("Extinction rate", "Population abundance", "Total biomass"), 
+                       values=c("#00BFC4", "red", "blue")) +
+  scale_linetype_manual(name="Evolution",
+                        breaks=c("evo", "noevo"),
+                        labels=c("Yes", "No"),
+                        values=c("solid","dashed")) +
+  theme_bw() + theme(legend.key = element_rect(colour = "white"))
 
 
 
