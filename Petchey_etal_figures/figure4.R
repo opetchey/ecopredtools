@@ -96,7 +96,7 @@ ggplot(filter(dd, Variable=="singlepop"), aes(x=num.uncert, y=Forecast.horizon, 
   scale_linetype_manual(name="Evolution",
                         breaks=c("evo", "noevo"),
                         labels=c("Yes", "No"),
-                        values=c("solid","dashed")) +
+                        values=c("dashed","solid")) +
   theme_bw() + theme(legend.key = element_rect(colour = "white"))
 
 ## only total biomass
@@ -114,7 +114,7 @@ ggplot(filter(dd, Variable=="totalbiomass"), aes(x=num.uncert, y=Forecast.horizo
   scale_linetype_manual(name="Evolution",
                         breaks=c("evo", "noevo"),
                         labels=c("Yes", "No"),
-                        values=c("solid","dashed")) +
+                        values=c("dashed","solid")) +
   theme_bw() + theme(legend.key = element_rect(colour = "white"))
 
 
